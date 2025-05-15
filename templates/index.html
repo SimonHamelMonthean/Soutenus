@@ -6,30 +6,123 @@
     <title>Mot du jour</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Georgia', serif;
             text-align: center;
-            margin-top: 50px;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        #mot-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
         }
         #mot {
-            font-size: 2em;
-            margin-top: 20px;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #3498db;
+            margin-right: 20px;
+        }
+        #definition {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            max-width: 500px;
+            text-align: left;
+        }
+        .add-word {
+            margin-top: 30px;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 5px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
         }
     </style>
 </head>
 <body>
-    <h1>Mot du jour</h1>
-    <div id="mot">Chargement...</div>
+    <div class="container">
+        <h1>Mot du jour</h1>
+        <div id="mot-container">
+            <div id="mot">Chargement...</div>
+            <div id="definition">Définition en cours de chargement...</div>
+        </div>
+
+        <div class="add-word">
+            <h2>Ajouter un nouveau mot</h2>
+            <input type="text" id="new-word" placeholder="Nouveau mot">
+            <input type="text" id="new-definition" placeholder="Définition">
+            <button onclick="addWord()">Ajouter</button>
+        </div>
+    </div>
+
     <script>
         async function fetchMot() {
-            try {            
+            try {
                 const response = await fetch('/mot');
+                if (!response.ok) throw new Error('Erreur réseau');
                 const data = await response.json();
-                document.getElementById('mot').innerText = data.mot;
+                document.getElementById('mot').textContent = data.mot;
+                document.getElementById('definition').textContent = data.definition || "Définition non disponible";
             } catch (error) {
                 console.error('Erreur:', error);
-                document.getElementById('mot').innerText = 'Erreur de chargement';
+                document.getElementById('mot').textContent = 'Erreur de chargement';
             }
         }
+
+        async function addWord() {
+            const word = document.getElementById('new-word').value;
+            const definition = document.getElementById('new-definition').value;
+
+            if (!word) return alert('Veuillez entrer un mot');
+
+            try {
+                const response = await fetch('/add_word', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({mot: word, definition: definition})
+                });
+
+                if (!response.ok) throw new Error('Erreur lors de l\'ajout');
+
+                alert('Mot ajouté avec succès!');
+                document.getElementById('new-word').value = '';
+                document.getElementById('new-definition').value = '';
+                fetchMot(); // Rafraîchir le mot affiché
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors de l\'ajout du mot');
+            }
+        }
+
         fetchMot();
     </script>
 </body>
