@@ -5,7 +5,7 @@ import random
 app = Flask(__name__)
 
 def get_random_mot():
-    conn = sqlite3.connect('mots.db')
+    conn = sqlite3.connect('/home/choupimalo/Soutenus/mots.db')
     cursor = conn.cursor()
     cursor.execute('SELECT mot FROM mots')
     mots = cursor.fetchall()
