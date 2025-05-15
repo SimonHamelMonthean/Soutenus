@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import sqlite3
 import random
 
@@ -19,7 +19,7 @@ def mot():
 
 @app.route('/')
 def index():
-    return "Bonjour à toutes et à tous"
+    return render_template('index.html')
 
 
 if __name__ == '__main__':
