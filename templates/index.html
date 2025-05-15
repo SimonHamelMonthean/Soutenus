@@ -21,9 +21,14 @@
     <div id="mot">Chargement...</div>
     <script>
         async function fetchMot() {
-            const response = await fetch('https://votre-api-url/mot');
-            const data = await response.json();
-            document.getElementById('mot').innerText = data.mot;
+            try {            
+                const response = await fetch('/mot');
+                const data = await response.json();
+                document.getElementById('mot').innerText = data.mot;
+            } catch (error) {
+                console.error('Erreur:', error);
+                document.getElementById('mot').innerText = 'Erreur de chargement';
+            }
         }
         fetchMot();
     </script>
