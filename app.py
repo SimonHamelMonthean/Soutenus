@@ -17,5 +17,10 @@ def mot():
     mot = get_random_mot()
     return jsonify({'mot': mot})
 
+@app.route('/')
+def index():
+    return "Bonjour à toutes et à tous"
+
+
 if __name__ == '__main__':
     app.run(debug=True)
